@@ -17,12 +17,32 @@ class AccountDB
     @db[atm_number]
   end
 
-  def update_db
+  def update_to_db(atm_number, user)
+    @db[atm_number] = user
+    save
+  end
+
+  def add_to_db(atm_number, user)
+    @db.store(atm_number, user)
+
+    save
 
   end
 
   def delete_from_db(atm_number)
     @db.delete(atm_number)
-    p @db
+
+    save
   end
+
+  def save
+    headers = %w(holder atm_number pin expiry_date balance)
+    CSV.open("accounts_db.csv", "w") do |csv|
+      csv << headers
+      @db.values.each do |user|
+        csv << user
+      end
+    end
+  end
+
 end
