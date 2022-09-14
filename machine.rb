@@ -3,7 +3,7 @@ require 'csv'
 require_relative 'user_account'
 require_relative 'db'
 
-class Machine
+class Machine1
   attr_writer :cash_available
   attr_reader :location
   @@count = 0
