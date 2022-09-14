@@ -86,6 +86,7 @@ class Machine
         # Save CSV here!
 
       elsif selected == 2
+        @accounts_db.delete_from_db(@current_user.atm_number)
       elsif selected == 3
         puts "Enter Old Pin"
         old_pin = gets.chomp

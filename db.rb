@@ -21,7 +21,8 @@ class AccountDB
 
   end
 
-  def delete_from_db
-
+  def delete_from_db(atm_number)
+    @db.delete(atm_number)
+    p @db
   end
 end

@@ -1,6 +1,6 @@
 class UserAccount
   attr_accessor :balance
-  attr_reader :holder, :expiry_date
+  attr_reader :holder, :atm_number, :expiry_date
 
   def initialize(holder, atm_number, pin, expiry_date, balance)
     @holder = holder
