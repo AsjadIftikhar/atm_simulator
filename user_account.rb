@@ -40,4 +40,8 @@ class UserAccount
       p "You Do not Have Enough Balance."
     end
   end
+
+  def to_list
+    list = [@holder, @atm_number, @pin, @expiry_date, @balance]
+  end
 end

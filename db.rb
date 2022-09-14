@@ -40,7 +40,7 @@ class AccountDB
     CSV.open("accounts_db.csv", "w") do |csv|
       csv << headers
       @db.values.each do |user|
-        csv << user
+        csv << user.to_list
       end
     end
   end
