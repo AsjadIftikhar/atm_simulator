@@ -1,42 +1,7 @@
 require 'csv'
 
-class UserAccount
-  attr_accessor :balance
-  attr_reader :holder, :expiry_date
-
-  def initialize(holder, atm_number, pin, expiry_date, balance)
-    @holder = holder
-    @atm_number = atm_number
-    @pin = pin
-    @expiry_date = expiry_date
-    @balance = balance
-  end
-
-  def authenticate_user?(pin)
-    @pin == pin
-  end
-
-  def change_pin(old_pin, new_pin)
-    if old_pin == @pin
-      @pin = new_pin
-    else
-      raise StandardError.new "Old Pin Doesn't Match"
-    end
-  end
-
-  def update_profile(name = nil)
-    if name
-      @holder = name
-    end
-
-  end
-
-  def show_balance
-    @balance
-  end
-
-  def with_draw_cash(amount) end
-end
+require_relative 'user_account'
+require_relative 'db'
 
 class Machine
   attr_writer :cash_available
@@ -49,17 +14,8 @@ class Machine
     @location = location
     @cash_available = cash_available
 
-    @accounts_db = get_db
-    # p @accounts_db
-  end
-
-  def get_db
-    db = {}
-    CSV.read("accounts_db.csv")[1..].each do |user|
-      user_account = UserAccount.new(user[0], user[1], user[2], user[3], user[4])
-      db.store(user[1], user_account)
-    end
-    db
+    @accounts_db = AccountDB.new
+    @current_user = nil
   end
 
   def authenticate
@@ -69,7 +25,7 @@ class Machine
       "3. Exit" => 3
     }
     selected = 0
-    while selected != 3
+    while selected < 3
       puts auth_options.keys
       selected = gets.chomp.to_i
 
@@ -79,13 +35,15 @@ class Machine
         puts "Enter Pin"
         pin = gets.chomp
 
-        if @accounts_db[account_number] && @accounts_db[account_number].authenticate_user?(pin)
+        current_user = @accounts_db.get_from_db(account_number)
+        if current_user && current_user.authenticate_user?(pin)
+          @current_user = current_user
           puts "Logged In Successfully"
         else
           puts "No Matching User Found"
         end
 
-        selected = 3
+        selected = 4
 
       elsif selected == 2
         puts "Enter Name"
@@ -101,9 +59,9 @@ class Machine
         @accounts_db.store(account_number, user)
 
         # Write back to CSV Here!
-
       end
     end
+    selected
   end
 
   def perform_action
@@ -115,26 +73,51 @@ class Machine
       "5. With Draw Cash" => 5,
       "6. Log Out" => 6
     }
+
+    selected = 0
+    while selected != 6
+      puts options.keys
+      selected = gets.chomp.to_i
+
+      if selected == 1
+        puts "Enter Name"
+        holder = gets.chomp
+
+        # Save CSV here!
+
+      elsif selected == 2
+      elsif selected == 3
+        puts "Enter Old Pin"
+        old_pin = gets.chomp
+
+        puts "Enter New Pin"
+        new_pin = gets.chomp
+
+        @current_user.change_pin(old_pin, new_pin)
+        # Update DB Here!
+      elsif selected == 4
+        puts "You Current Balance is #{@current_user.show_balance}"
+
+      elsif selected == 5
+        puts "Enter Amount"
+        amount = gets.chomp.to_i
+
+        if @cash_available >= amount
+          @current_user.with_draw_cash(amount)
+        else
+          p "ATM machine is out of cash."
+        end
+      end
+    end
   end
 
   def visit_atm
-    authenticate
-    perform_action
-    # options = get_options
-    # selected = 0
-    # while selected != options["Log Out"]
-    #   if selected == 1
-    #
-    #   elsif selected == 2
-    #   elsif selected == 3
-    #   elsif selected == 4
-    #   elsif selected == 5
-    #   elsif selected == 6
-    #   end
-    # end
+    selected = authenticate
+    perform_action if selected != 3
+
   end
 
 end
 
 machine = Machine.new("Gulberg 3", 20000)
-machine.authenticate
+machine.visit_atm
