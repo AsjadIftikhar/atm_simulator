@@ -6,7 +6,7 @@ class AccountDB
 
   def get_db
     db = {}
-    CSV.read("accounts_db.csv", headers: false ).each do |user|
+    CSV.read("accounts_db.csv")[1..].each do |user|
       user_account = UserAccount.new(user[0], user[1], user[2], user[3], user[4])
       db.store(user[1], user_account)
     end
@@ -24,8 +24,9 @@ class AccountDB
 
   def add_to_db(atm_number, user)
     @db.store(atm_number, user)
-
     save
+
+    @db = get_db
 
   end
 

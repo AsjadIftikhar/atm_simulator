@@ -39,12 +39,13 @@ class Machine
         if current_user && current_user.authenticate_user?(pin)
           @current_user = current_user
           puts "Logged In Successfully"
+
+          selected = 4
         else
           puts "No Matching User Found"
+
+          selected = 1
         end
-
-        selected = 4
-
       elsif selected == 2
         puts "Enter Name"
         holder = gets.chomp
@@ -59,6 +60,7 @@ class Machine
         @accounts_db.add_to_db(account_number, user)
 
         puts "Your New Account Details:\nAccount: #{account_number}\nPin: #{pin}"
+        selected = 1
       end
     end
     selected
@@ -95,6 +97,7 @@ class Machine
 
       elsif selected == 2
         @accounts_db.delete_from_db(@current_user.atm_number)
+        selected = 6
 
       elsif selected == 3
         puts "Enter Old Pin"
