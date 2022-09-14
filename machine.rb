@@ -90,7 +90,7 @@ class Machine
         puts "Enter Name"
         holder = gets.chomp
 
-        @current_user.holder = holder
+        @current_user.update_profile(holder)
         @accounts_db.update_to_db(@current_user.atm_number, @current_user)
 
       elsif selected == 2
