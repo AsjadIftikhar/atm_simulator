@@ -34,10 +34,14 @@ class UserAccount
   end
 
   def with_draw_cash(amount)
-    if @balance - amount >= 0
-      @balance -= amount
+    if @balance.to_i - amount >= 0
+      @balance = @balance.to_i - amount
     else
       p "You Do not Have Enough Balance."
     end
+  end
+
+  def to_list
+    list = [@holder, @atm_number, @pin, @expiry_date, @balance]
   end
 end

@@ -15,7 +15,7 @@ class Machine
     @cash_available = cash_available
 
     @accounts_db = AccountDB.new
-    @current_user = nil
+    @current_user = UserAccount
   end
 
   def authenticate
@@ -56,9 +56,9 @@ class Machine
         account_number = rand(10000..99999)
 
         user = UserAccount.new(holder, account_number, pin, "2030", balance)
-        @accounts_db.store(account_number, user)
+        @accounts_db.add_to_db(account_number, user)
 
-        # Write back to CSV Here!
+        puts "Your New Account Details:\nAccount: #{account_number}\nPin: #{pin}"
       end
     end
     selected
@@ -66,6 +66,7 @@ class Machine
 
   def perform_action
     options = {
+      "0. View Summary" => 0,
       "1. Update User Account" => 1,
       "2. Delete User Account" => 2,
       "3. Change Pin" => 3,
@@ -74,19 +75,27 @@ class Machine
       "6. Log Out" => 6
     }
 
-    selected = 0
+    selected = -1
     while selected != 6
       puts options.keys
       selected = gets.chomp.to_i
 
-      if selected == 1
+      if selected == 0
+        puts "Name #{@current_user.holder}"
+        puts "ATM Number #{@current_user.atm_number}"
+        puts "Expiry Date #{@current_user.expiry_date}"
+        puts "Balance #{@current_user.show_balance}"
+
+      elsif selected == 1
         puts "Enter Name"
         holder = gets.chomp
 
-        # Save CSV here!
+        @current_user.holder = holder
+        @accounts_db.update_to_db(@current_user.atm_number, @current_user)
 
       elsif selected == 2
         @accounts_db.delete_from_db(@current_user.atm_number)
+
       elsif selected == 3
         puts "Enter Old Pin"
         old_pin = gets.chomp
@@ -95,7 +104,8 @@ class Machine
         new_pin = gets.chomp
 
         @current_user.change_pin(old_pin, new_pin)
-        # Update DB Here!
+        @accounts_db.update_to_db(@current_user.atm_number, @current_user)
+
       elsif selected == 4
         puts "You Current Balance is #{@current_user.show_balance}"
 
@@ -105,6 +115,7 @@ class Machine
 
         if @cash_available >= amount
           @current_user.with_draw_cash(amount)
+          @accounts_db.update_to_db(@current_user.atm_number, @current_user)
         else
           p "ATM machine is out of cash."
         end
@@ -115,9 +126,7 @@ class Machine
   def visit_atm
     selected = authenticate
     perform_action if selected != 3
-
   end
-
 end
 
 machine = Machine.new("Gulberg 3", 20000)
