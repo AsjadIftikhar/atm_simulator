@@ -100,24 +100,26 @@ class Machine
         user = UserAccount.new(holder, account_number, pin, "2030", balance)
         @accounts_db.store(account_number, user)
 
+        # Write back to CSV Here!
+
       end
     end
   end
 
-  def get_options
+  def perform_action
     options = {
-      "1. Create User Account" => 1,
-      "2. Update User Account" => 2,
-      "3. Delete User Account" => 3,
-      "4. Change Pin" => 4,
-      "5. Show Balance" => 5,
-      "6. With Draw Cash" => 6,
-      "7. Log Out" => 7
+      "1. Update User Account" => 1,
+      "2. Delete User Account" => 2,
+      "3. Change Pin" => 3,
+      "4. Show Balance" => 4,
+      "5. With Draw Cash" => 5,
+      "6. Log Out" => 6
     }
   end
 
   def visit_atm
     authenticate
+    perform_action
     # options = get_options
     # selected = 0
     # while selected != options["Log Out"]
