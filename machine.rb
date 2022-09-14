@@ -57,6 +57,8 @@ class Machine
 
         user = UserAccount.new(holder, account_number, pin, "2030", balance)
         @accounts_db.add_to_db(account_number, user)
+
+        puts "Your New Account Details:\nAccount: #{account_number}\nPin: #{pin}"
       end
     end
     selected
@@ -64,6 +66,7 @@ class Machine
 
   def perform_action
     options = {
+      "0. View Summary" => 0,
       "1. Update User Account" => 1,
       "2. Delete User Account" => 2,
       "3. Change Pin" => 3,
@@ -72,12 +75,18 @@ class Machine
       "6. Log Out" => 6
     }
 
-    selected = 0
+    selected = -1
     while selected != 6
       puts options.keys
       selected = gets.chomp.to_i
 
-      if selected == 1
+      if selected == 0
+        puts "Name #{@current_user.holder}"
+        puts "ATM Number #{@current_user.atm_number}"
+        puts "Expiry Date #{@current_user.expiry_date}"
+        puts "Balance #{@current_user.show_balance}"
+
+      elsif selected == 1
         puts "Enter Name"
         holder = gets.chomp
 
