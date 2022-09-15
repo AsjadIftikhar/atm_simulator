@@ -1,7 +1,7 @@
 require 'csv'
 
 require_relative 'user_account'
-require_relative 'db'
+require_relative 'account_db'
 
 class Machine
   attr_writer :cash_available
