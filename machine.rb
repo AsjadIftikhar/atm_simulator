@@ -3,7 +3,7 @@ require 'csv'
 require_relative 'user_account'
 require_relative 'db'
 
-class Machine1
+class Machine
   attr_writer :cash_available
   attr_reader :location
   @@count = 0
@@ -36,7 +36,7 @@ class Machine1
         pin = gets.chomp
 
         current_user = @accounts_db.get_from_db(account_number)
-        if current_user && current_user.authenticate_user?(pin)
+        if current_user && current_user.is_valid_pin?(pin)
           @current_user = current_user
           puts "Logged In Successfully"
 
