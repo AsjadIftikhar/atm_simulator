@@ -10,7 +10,7 @@ class UserAccount
     @balance = balance
   end
 
-  def authenticate_user?(pin)
+  def is_valid_pin?(pin)
     @pin == pin
   end
 
@@ -34,8 +34,8 @@ class UserAccount
   end
 
   def with_draw_cash(amount)
-    if @balance.to_i - amount >= 0
-      @balance = @balance.to_i - amount
+    if @balance - amount >= 0
+      @balance = @balance - amount
     else
       p "You Do not Have Enough Balance."
     end

@@ -6,8 +6,8 @@ class AccountDB
 
   def get_db
     db = {}
-    CSV.read("accounts_db.csv")[1..].each do |user|
-      user_account = UserAccount.new(user[0], user[1], user[2], user[3], user[4])
+    CSV.read("outside_accounts_db.csv", headers: true ).each do | user |
+      user_account = UserAccount.new(user[0], user[1], user[2], user[3], user[4].to_i)
       db.store(user[1], user_account)
     end
     db
@@ -38,10 +38,11 @@ class AccountDB
 
   def save
     headers = %w(holder atm_number pin expiry_date balance)
-    CSV.open("accounts_db.csv", "w") do |csv|
+    CSV.open("outside_accounts_db.csv", "w" ) do |csv|
       csv << headers
-      @db.values.each do |user|
-        csv << user.to_list
+      @db.each do |user|
+        csv << user[1].to_h
+        # csv << user[1].to_list
       end
     end
   end
