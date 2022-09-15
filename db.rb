@@ -6,8 +6,8 @@ class AccountDB
 
   def get_db
     db = {}
-    CSV.read("atm_simulator/accounts_db.csv")[1..].each do |user|
-      user_account = UserAccount.new(user[0], user[1], user[2], user[3], user[4])
+    CSV.read("atm_simulator/accounts_db.csv", headers:false).each do |user|
+      user_account = UserAccount.new(user[0], user[1], user[2], user[3], user[4].to_i)
       db.store(user[1], user_account)
     end
     db
@@ -39,7 +39,6 @@ class AccountDB
   def save
     headers = %w(holder atm_number pin expiry_date balance)
     CSV.open("accounts_db.csv", "w") do |csv|
-      csv << headers
       @db.values.each do |user|
         csv << user.to_list
       end
